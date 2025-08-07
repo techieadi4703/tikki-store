@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext.jsx";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/Firebase.js";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -28,6 +30,24 @@ const Signup = () => {
     }
   }
 
+  const googleSignup=async(e)=>{
+    e.preventDefault();
+    try {
+      const response= await signInWithPopup(auth, provider);
+      const user= response.user;
+      const name=user.displayName;
+      const email=user.email;
+      
+      const result=await axios.post(`${serverURL}/api/auth/googleLogin`, {
+        name,
+        email,
+      },{withCredentials: true});
+      console.log("GOOGLE_SIGNUP_RESULT", result.data);
+      navigate("/");
+    } catch (error) {
+      console.log("ERROR",error);
+    }
+  }
   return (
     <div className="w-[100vw] h-[100vh] bg-gradient-to-l from-[#141414] to-[#0c2025] text-[#fff] flex flex-col  items-center justify-start">
       <div
@@ -47,7 +67,7 @@ const Signup = () => {
           onSubmit={handleSignup}
           className="w-[90%] h-[90%] flex flex-col items-center justify-start gap-[20px]"
         >
-          <div className="w-[90%] h-[50px] bg-[#42656cae] rounded-lg flex items-center justify-center gap-[10px] py-[20px] cursor-pointer">
+          <div className="w-[90%] h-[50px] bg-[#42656cae] rounded-lg flex items-center justify-center gap-[10px] py-[20px] cursor-pointer" onClick={googleSignup}>
             <img src={google} alt="" className="w-[20px]" /> Signup with Google
           </div>
           <div className="w-[100%] h-[20px] flex items-center justify-center gap-[10px]">

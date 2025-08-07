@@ -73,3 +73,25 @@ export const logout = async (req,res)=>{
         res.status(500).json({ message: `Logout Error ${error}` });
     }
 }
+
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const existUser = await User.findOne({ email });
+        if (!existUser) {
+            existUser = await User.create({ name, email });
+        } 
+        let token = generateToken(user._id);
+        res.cookie("tokenCookie", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return res.status(201).json({ message: "Google-User Created Successfully", user });
+    } catch (error) {
+        console.log("Google Login Error");
+        return res.status(500).json({ message: `Google Login Error ${error}` });
+    }
+}
