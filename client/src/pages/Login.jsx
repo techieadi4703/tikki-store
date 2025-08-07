@@ -26,6 +26,7 @@ const Login = () => {
       console.log("Login Error FE", error);
     }
   }
+  
   const googleLogin=async(e)=>{
     e.preventDefault();
     try {
