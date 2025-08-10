@@ -7,12 +7,14 @@ import axios from "axios";
 import { authDataContext } from "../context/AuthContext.jsx";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/Firebase.js";
+import { userDataContext } from "../context/UserContext.jsx";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const {serverURL} = useContext(authDataContext);
+  const {getCurrentUser} = useContext(userDataContext);
   let navigate = useNavigate();
   const handleLogin= async(e)=>{
     e.preventDefault();
@@ -22,6 +24,8 @@ const Login = () => {
         password,
       },{withCredentials: true});
       console.log("LOGIN_RESULT",result.data);
+      getCurrentUser();
+      navigate("/");
     } catch (error) {
       console.log("Login Error FE", error);
     }
@@ -40,6 +44,7 @@ const Login = () => {
         email,
       },{withCredentials: true});
       console.log("GOOGLE_LOGIN_RESULT", result.data);
+      getCurrentUser();
       navigate("/");
     } catch (error) {
       console.log("ERROR",error);

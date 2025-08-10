@@ -5,6 +5,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.route.js";
+import userRouter from "./routes/user.routes.js";
 config();
 const port = process.env.PORT || 6000;
 
@@ -16,6 +17,7 @@ app.use(cors({
 }));
 
 app.use("/api/auth",authRouter);
+app.use("/api/user", userRouter);
 
 
 app.listen(port, () => {
