@@ -80,7 +80,7 @@ const Navbar = () => {
           </div>
         )}
         <TiShoppingCart className="cursor-pointer w-[30px] h-[30px] text-black hidden md:block" />
-        <p className="absolute w-[18px] h-[18px] items-center justify-center bg-black px-[5px] py-[2px] text-white rounded-full text-[9px] top-[10px] right-[20px] hidden hidden md:block">
+        <p className="absolute w-[18px] h-[18px] items-center justify-center bg-black px-[5px] py-[2px] text-white rounded-full text-[9px] top-[10px] right-[20px] hidden md:block">
           10
         </p>
       </div>
