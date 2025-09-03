@@ -1,7 +1,7 @@
 import validator from "validator";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../config/token.js";
+import { generateAdminToken, generateToken } from "../config/token.js";
 
 export const signup = async (req, res) => {
   try {
@@ -64,34 +64,55 @@ export const login = async (req, res) => {
   }
 };
 
-
-export const logout = async (req,res)=>{
-    try {
-        res.clearCookie("tokenCookie");
-        return res.status(200).json({ message: "User Logged-out Successfully" });
-    } catch (error) {
-        res.status(500).json({ message: `Logout Error ${error}` });
-    }
-}
-
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("tokenCookie");
+    return res.status(200).json({ message: "User Logged-out Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: `Logout Error ${error}` });
+  }
+};
 
 export const googleLogin = async (req, res) => {
-    try {
-        const { name, email } = req.body;
-        let existUser = await User.findOne({ email });
-        if (!existUser) {
-            existUser = await User.create({ name, email });
-        } 
-        let token = generateToken(existUser._id);
-        res.cookie("tokenCookie", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-        return res.status(201).json({ message: "Google-User Created Successfully", user: existUser });
-    } catch (error) {
-        console.log("Google Login Error");
-        return res.status(500).json({ message: `Google Login Error ${error}` });
+  try {
+    const { name, email } = req.body;
+    let existUser = await User.findOne({ email });
+    if (!existUser) {
+      existUser = await User.create({ name, email });
     }
-}
+    let token = generateToken(existUser._id);
+    res.cookie("tokenCookie", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return res
+      .status(201)
+      .json({ message: "Google-User Created Successfully", user: existUser });
+  } catch (error) {
+    console.log("Google Login Error");
+    return res.status(500).json({ message: `Google Login Error ${error}` });
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    let {email,password}=req.body;
+    if(email===process.env.ADMIN_ID && password===process.env.ADMIN_PASSWORD){
+      let token= generateAdminToken(email);
+      console.log("HELLOTOKEN",token)
+      res.cookie("adminToken",token,{
+        httpOnly:true,
+        sameSite:"Strict",
+        maxAge:7*24*60*60*1000,
+        secure: process.env.NODE_ENV === "production"
+      })
+      return res.status(201).json({message:"Admin Logged-in Successfully",user:{email,token}});
+    }
+    return res.status(400).json({message:"Invalid Admin Credentials"});
+  } catch (error) {
+    console.log("Admin Login Error");
+    return res.status(500).json({ message: `Admin Login Error ${error}` });
+  }
+};

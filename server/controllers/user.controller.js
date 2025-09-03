@@ -14,3 +14,15 @@ export const getCurrentUser=async(req,res)=>{
     }
 }
 
+export const getAdmin=async(req,res)=>{
+    try {
+        const adminID=req.adminID;
+        console.log(adminID,"IDheheeh\n")
+        if(!adminID) return res.status(404).json({message:"Admin not found"});
+        return res.status(201).json({email:adminID,role:"admin"});
+    } catch (error) {
+        console.log("getAdmin errorBE",error);
+        return res.status(500).json({message:"Unable to fetch admin"});
+    }
+}
+

@@ -8,3 +8,12 @@ export const generateToken = (userId) => {
     return token;
   } catch (error) { console.log("token error", error); return null; }
 };
+
+export const generateAdminToken = (email) => {
+  try {
+    let token = jwt.sign({ email }, process.env.ADMIN_ID, {
+      expiresIn: "7d",
+    });
+    return token;
+  } catch (error) { console.log("token error", error); return null; }
+};
